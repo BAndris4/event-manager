@@ -1,0 +1,51 @@
+package inf.unideb.hu.event_manager.data.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "events")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class EventEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description", length = 2000)
+    private String description;
+
+    @Column(name = "startDate", nullable = false)
+    private LocalDateTime startDate;
+
+    @Column(name = "endDate")
+    private LocalDateTime endDate;
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "capacity")
+    private Integer capacity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status",  nullable = false)
+    private EventStatus status = EventStatus.PLANNED;
+
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
+}
