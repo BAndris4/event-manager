@@ -1,0 +1,66 @@
+package inf.unideb.hu.event_manager.service.impl;
+
+import inf.unideb.hu.event_manager.data.entity.RegistrationsEntity;
+import inf.unideb.hu.event_manager.data.repository.EventRepository;
+import inf.unideb.hu.event_manager.data.repository.RegistrationsRepository;
+import inf.unideb.hu.event_manager.data.repository.UserRepository;
+import inf.unideb.hu.event_manager.service.RegistrationsService;
+import inf.unideb.hu.event_manager.service.dto.RegistrationsDto;
+import inf.unideb.hu.event_manager.service.mapper.RegistrationsMapper;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class RegistrationsServiceImpl implements RegistrationsService {
+
+    private final RegistrationsRepository registrationsRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final RegistrationsMapper registrationsMapper;
+
+    public RegistrationsServiceImpl(RegistrationsRepository registrationsRepository, UserRepository userRepository, EventRepository eventRepository, RegistrationsMapper registrationsMapper) {
+        this.registrationsRepository = registrationsRepository;
+        this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
+        this.registrationsMapper = registrationsMapper;
+    }
+
+
+
+    @Override
+    public RegistrationsDto registerUserToEvent(Long userId, Long eventId) {
+        RegistrationsEntity registrationsEntity = registrationsRepository.findByUserIdAndEventId(userId, eventId);
+        if (registrationsEntity != null) {
+            throw new IllegalStateException("User already registered for this event.");
+        }
+
+        registrationsEntity = new RegistrationsEntity();
+        registrationsEntity.setUser(userRepository.getReferenceById(userId));
+        registrationsEntity.setEvent(eventRepository.getReferenceById(eventId));
+        registrationsEntity.setRegisteredAt(LocalDateTime.now());
+
+        return registrationsMapper.registrationsEntityToDto(registrationsRepository.save(registrationsEntity));
+    }
+
+    @Override
+    public RegistrationsDto unregisterUserFromEvent(Long userId, Long eventId) {
+        RegistrationsEntity registrationsEntity = registrationsRepository.findByUserIdAndEventId(userId, eventId);
+        if (registrationsEntity == null) {
+            throw new IllegalStateException("User no registered for this event.");
+        }
+        registrationsRepository.delete(registrationsEntity);
+        return registrationsMapper.registrationsEntityToDto(registrationsEntity);
+    }
+
+    @Override
+    public List<RegistrationsDto> getUserRegistrations(Long userId) {
+        return registrationsMapper.registrationsEntityToDto(registrationsRepository.findAllByUserId(userId));
+    }
+
+    @Override
+    public List<RegistrationsDto> getEventRegistrations(Long eventId) {
+        return registrationsMapper.registrationsEntityToDto(registrationsRepository.findAllByEventId(eventId));
+    }
+}
