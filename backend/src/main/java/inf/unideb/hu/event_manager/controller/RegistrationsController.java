@@ -1,11 +1,16 @@
 package inf.unideb.hu.event_manager.controller;
 
 import inf.unideb.hu.event_manager.data.entity.UserEntity;
+import inf.unideb.hu.event_manager.data.repository.UserRepository;
 import inf.unideb.hu.event_manager.service.RegistrationsService;
 import inf.unideb.hu.event_manager.service.dto.RegistrationsDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -14,16 +19,54 @@ import java.util.List;
 public class RegistrationsController {
 
     private final RegistrationsService registrationsService;
+    private final UserRepository userRepository;
 
-    public RegistrationsController(RegistrationsService registrationsService) {
+    public RegistrationsController(RegistrationsService registrationsService,
+                                   UserRepository userRepository) {
         this.registrationsService = registrationsService;
+        this.userRepository = userRepository;
     }
 
     private Long getCurrentUserId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ((UserEntity) principal).getId();
-    }
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        // Nincs vagy anonim auth → 401
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nincs bejelentkezett felhasználó");
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        // Ha JwtFilter UserEntity-t rakott be:
+        if (principal instanceof UserEntity userEntity) {
+            return userEntity.getId();
+        }
+
+        String email;
+
+        // Ha UserDetails
+        if (principal instanceof UserDetails userDetails) {
+            email = userDetails.getUsername();
+        }
+        // Ha sima String (pl. email)
+        else if (principal instanceof String s) {
+            if ("anonymousUser".equals(s)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nincs bejelentkezett felhasználó");
+            }
+            email = s;
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ismeretlen felhasználó típus");
+        }
+
+        UserEntity user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Felhasználó nem található");
+        }
+
+        return user.getId();
+    }
 
     @PostMapping("/{eventId}")
     public ResponseEntity<RegistrationsDto> registerUser(@PathVariable Long eventId) {
