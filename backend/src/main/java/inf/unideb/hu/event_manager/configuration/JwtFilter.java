@@ -3,6 +3,7 @@ package inf.unideb.hu.event_manager.configuration;
 import inf.unideb.hu.event_manager.data.entity.UserEntity;
 import inf.unideb.hu.event_manager.data.repository.UserRepository;
 import inf.unideb.hu.event_manager.service.TokenService;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,17 @@ public class JwtFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final UserRepository userRepository;
 
+    private String extractJwtFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -30,14 +42,13 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
+        String token = extractJwtFromCookie(request);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);
         String email = tokenService.extractUsername(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -64,3 +75,4 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
