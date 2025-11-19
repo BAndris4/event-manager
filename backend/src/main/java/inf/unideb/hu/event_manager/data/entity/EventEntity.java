@@ -39,10 +39,6 @@ public class EventEntity {
     @Column(name = "capacity")
     private Integer capacity;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status",  nullable = false)
-    private EventStatus status = EventStatus.PLANNED;
-
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 

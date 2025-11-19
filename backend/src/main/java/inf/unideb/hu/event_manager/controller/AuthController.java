@@ -4,6 +4,7 @@ import inf.unideb.hu.event_manager.service.AuthService;
 import inf.unideb.hu.event_manager.service.dto.LoginDto;
 import inf.unideb.hu.event_manager.service.dto.RegistrationDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,18 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header("Set-Cookie", cookie.toString())
                 .body("Login successful");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        ResponseCookie deleteCookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .build();
     }
 }

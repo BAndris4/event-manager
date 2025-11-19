@@ -66,4 +66,5 @@ public class AuthServiceImpl implements AuthService {
         UserEntity userEntity = userRepository.findByEmail(dto.getEmail());
         return tokenService.generateToken(userEntity);
     }
+
 }
