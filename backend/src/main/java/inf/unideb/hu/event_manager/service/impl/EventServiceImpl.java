@@ -1,7 +1,6 @@
 package inf.unideb.hu.event_manager.service.impl;
 
 import inf.unideb.hu.event_manager.data.entity.EventEntity;
-import inf.unideb.hu.event_manager.data.entity.EventStatus;
 import inf.unideb.hu.event_manager.data.repository.EventRepository;
 import inf.unideb.hu.event_manager.service.EventService;
 import inf.unideb.hu.event_manager.service.dto.EventDto;
@@ -40,10 +39,6 @@ public class EventServiceImpl implements EventService {
     public EventDto createEvent(EventDto dto) {
         EventEntity entity = eventMapper.eventDtoToEntity(dto);
 
-        if (entity.getStatus() == null) {
-            entity.setStatus(EventStatus.PLANNED);
-        }
-
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
 
@@ -62,11 +57,6 @@ public class EventServiceImpl implements EventService {
         existingEvent.setEndDate(dto.getEndDate());
         existingEvent.setLocation(dto.getLocation());
         existingEvent.setCapacity(dto.getCapacity());
-        if (dto.getStatus() == null) {
-            existingEvent.setStatus(EventStatus.PLANNED);
-        } else {
-            existingEvent.setStatus(dto.getStatus());
-        }
         existingEvent.setUpdatedAt(LocalDateTime.now());
 
         return eventMapper.eventEntityToDto(eventRepository.save(existingEvent));

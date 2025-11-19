@@ -7,6 +7,7 @@ import inf.unideb.hu.event_manager.service.dto.RegistrationsDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -28,39 +29,15 @@ public class RegistrationsController {
     }
 
     private Long getCurrentUserId() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Nincs vagy anonim auth → 401
-        if (authentication == null ||
-                !authentication.isAuthenticated() ||
-                authentication instanceof AnonymousAuthenticationToken) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nincs bejelentkezett felhasználó");
         }
 
-        Object principal = authentication.getPrincipal();
-
-        // Ha JwtFilter UserEntity-t rakott be:
-        if (principal instanceof UserEntity userEntity) {
-            return userEntity.getId();
-        }
-
-        String email;
-
-        // Ha UserDetails
-        if (principal instanceof UserDetails userDetails) {
-            email = userDetails.getUsername();
-        }
-        // Ha sima String (pl. email)
-        else if (principal instanceof String s) {
-            if ("anonymousUser".equals(s)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nincs bejelentkezett felhasználó");
-            }
-            email = s;
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ismeretlen felhasználó típus");
-        }
-
+        String email = auth.getName();
         UserEntity user = userRepository.findByEmail(email);
+
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Felhasználó nem található");
         }
