@@ -1,5 +1,6 @@
 package inf.unideb.hu.event_manager.service.impl;
 
+import inf.unideb.hu.event_manager.data.entity.EventEntity;
 import inf.unideb.hu.event_manager.data.entity.RegistrationsEntity;
 import inf.unideb.hu.event_manager.data.repository.EventRepository;
 import inf.unideb.hu.event_manager.data.repository.RegistrationsRepository;
@@ -31,12 +32,19 @@ public class RegistrationsServiceImpl implements RegistrationsService {
 
     @Override
     public RegistrationsDto registerUserToEvent(Long userId, Long eventId) {
-        RegistrationsEntity registrationsEntity = registrationsRepository.findByUserIdAndEventId(userId, eventId);
-        if (registrationsEntity != null) {
+        if (registrationsRepository.existsByUserIdAndEventId(userId, eventId)) {
             throw new IllegalStateException("User already registered for this event.");
         }
 
-        registrationsEntity = new RegistrationsEntity();
+        EventEntity event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+
+        long currentRegistrations = registrationsRepository.countByEventId(eventId);
+        if (currentRegistrations >= event.getCapacity()) {
+            throw new IllegalStateException("The event has been reached the maximum number of registrations.");
+        }
+
+        RegistrationsEntity registrationsEntity = new RegistrationsEntity();
         registrationsEntity.setUser(userRepository.getReferenceById(userId));
         registrationsEntity.setEvent(eventRepository.getReferenceById(eventId));
         registrationsEntity.setRegisteredAt(LocalDateTime.now());

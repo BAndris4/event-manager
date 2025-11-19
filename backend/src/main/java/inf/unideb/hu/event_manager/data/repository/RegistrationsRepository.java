@@ -8,8 +8,8 @@ import java.util.List;
 public interface RegistrationsRepository extends JpaRepository<RegistrationsEntity, Long> {
 
     RegistrationsEntity findByUserIdAndEventId(Long userId, Long eventId);
-
     List<RegistrationsEntity> findAllByEventId(Long eventId);
-
     List<RegistrationsEntity> findAllByUserId(Long userId);
+    boolean existsByUserIdAndEventId(Long userId, Long eventId);
+    long countByEventId(Long eventId);
 }
