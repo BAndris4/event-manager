@@ -37,6 +37,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto createEvent(EventDto dto) {
+
+        if (dto.getEndDate() != null && dto.getEndDate().isBefore(dto.getStartDate())) {
+            throw new IllegalStateException("End date must be after start date.");
+        }
+
         EventEntity entity = eventMapper.eventDtoToEntity(dto);
 
         entity.setCreatedAt(LocalDateTime.now());
@@ -48,6 +53,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto updateEvent(Long id, EventDto dto) {
+
+        if (dto.getEndDate() != null && dto.getEndDate().isBefore(dto.getStartDate())) {
+            throw new IllegalStateException("End date must be after start date.");
+        }
+
         EventEntity existingEvent = eventRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Event with id " + id + " not found!"));
 

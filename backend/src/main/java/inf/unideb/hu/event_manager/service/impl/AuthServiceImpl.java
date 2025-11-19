@@ -36,10 +36,10 @@ public class AuthServiceImpl implements AuthService {
         UserEntity userEntity = userMapper.registrationDtoToEntity(dto);
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        RoleEntity role = roleRepository.findByRoleName("AUTHENTICATED_USER");
+        RoleEntity role = roleRepository.findByRoleName("ROLE_USER");
         if (role == null) {
           role = new RoleEntity();
-          role.setRoleName("AUTHENTICATED_USER");
+          role.setRoleName("ROLE_USER");
           roleRepository.save(role);
         }
         userEntity.setRole(role);
