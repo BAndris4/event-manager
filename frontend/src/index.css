@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --white: #fdffff;
+  --ruby-red: #B10F2E;
+  --black-cherry: #570000;
+  --rich-mahogany: #280000;
+  --burnt-peach: #DE7C5A;
+}
+
+body {
+  font-family: "Merriweather", serif;
+}
