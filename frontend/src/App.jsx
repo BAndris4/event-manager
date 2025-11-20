@@ -1,9 +1,15 @@
 import "./index.css"
 import "@fontsource/merriweather"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Home from "./views/Home"
 
 function App() {
   return (
-    <div>Hello world!</div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
