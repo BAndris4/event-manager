@@ -77,7 +77,6 @@ function Navbar() {
           </span>
         </button>
 
-        {/* Right side auth buttons */}
         <div className="flex items-center gap-2">
           {!loading && isAuthenticated === false && (
             <>
@@ -117,6 +116,21 @@ function Navbar() {
           )}
 
           {!loading && isAuthenticated === true && (
+          <>
+            <button
+              onClick={() => navigate("/my-registrations")}
+              className={`
+                hidden sm:inline-flex px-3 py-1.5 rounded-full text-sm font-medium
+                text-[var(--rich-mahogany)]
+                transition-all duration-300
+                border border-[var(--ruby-red)]/10
+                hover:border-[var(--ruby-red)]/20
+                hover:bg-[var(--ruby-red)] hover:text-white hover:scale-105 active:scale-95
+              `}
+            >
+              Jelentkezéseim
+            </button>
+
             <button
               onClick={handleLogout}
               className="
@@ -130,7 +144,8 @@ function Navbar() {
             >
               Kijelentkezés
             </button>
-          )}
+          </>
+        )}
         </div>
       </nav>
     </header>
