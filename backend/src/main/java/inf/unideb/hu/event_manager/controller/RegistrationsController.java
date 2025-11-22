@@ -67,4 +67,19 @@ public class RegistrationsController {
     public ResponseEntity<List<RegistrationsDto>> getEventRegistrations(@PathVariable Long eventId) {
         return ResponseEntity.ok(registrationsService.getEventRegistrations(eventId));
     }
+
+    @PutMapping("/{registrationId}/move/{newEventId}")
+    public ResponseEntity<RegistrationsDto> moveRegistration(
+            @PathVariable Long registrationId,
+            @PathVariable Long newEventId
+    ) {
+        try {
+            RegistrationsDto updated = registrationsService.moveRegistration(registrationId, newEventId);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(null);
+        }
+    }
 }

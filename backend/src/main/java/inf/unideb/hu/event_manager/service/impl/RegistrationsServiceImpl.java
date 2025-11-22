@@ -69,4 +69,35 @@ public class RegistrationsServiceImpl implements RegistrationsService {
     public List<RegistrationsDto> getEventRegistrations(Long eventId) {
         return registrationsMapper.registrationsEntityToDto(registrationsRepository.findAllByEventId(eventId));
     }
+
+    @Override
+    public RegistrationsDto moveRegistration(Long id, Long newEventId) {
+
+        RegistrationsEntity reg = registrationsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
+
+        Long oldEventId = reg.getEvent().getId();
+        Long userId = reg.getUser().getId();
+
+        if (oldEventId.equals(newEventId)) {
+            throw new IllegalStateException("User is already registered to this event.");
+        }
+
+        EventEntity newEvent = eventRepository.findById(newEventId)
+                .orElseThrow(() -> new IllegalArgumentException("Target event not found: " + newEventId));
+
+        if (registrationsRepository.existsByUserIdAndEventId(userId, newEventId)) {
+            throw new IllegalStateException("User already registered to the target event.");
+        }
+
+        long current = registrationsRepository.countByEventId(newEventId);
+        if (current >= newEvent.getCapacity()) {
+            throw new IllegalStateException("The target event has reached its maximum capacity.");
+        }
+
+        reg.setEvent(newEvent);
+
+        return registrationsMapper.registrationsEntityToDto(registrationsRepository.save(reg));
+    }
+
 }

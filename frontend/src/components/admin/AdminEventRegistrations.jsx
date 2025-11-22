@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, MoveRight } from "lucide-react";
 import RegistrationDeleteModal from "./RegistrationDeleteModal";
+import MoveRegistrationModal from "./MoveRegistrationModal";
 
 export default function AdminEventRegistrations({ eventId }) {
   const [registrations, setRegistrations] = useState([]);
@@ -9,6 +10,10 @@ export default function AdminEventRegistrations({ eventId }) {
 
   const [selectedRegistration, setSelectedRegistration] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+
+  const [selectedMoveRegistration, setSelectedMoveRegistration] =
+    useState(null);
+  const [selectedMoveUser, setSelectedMoveUser] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/registrations/event/${eventId}`, {
@@ -65,8 +70,8 @@ export default function AdminEventRegistrations({ eventId }) {
 
   return (
     <>
-      {/* Törlés popup */}
-      {selectedRegistration && (
+      {/* Jelentkezés törlése */}
+      {selectedRegistration && selectedUser && (
         <RegistrationDeleteModal
           registration={selectedRegistration}
           user={selectedUser}
@@ -77,6 +82,24 @@ export default function AdminEventRegistrations({ eventId }) {
           }}
           onDeleted={(userId) =>
             setRegistrations((prev) => prev.filter((r) => r.userId !== userId))
+          }
+        />
+      )}
+
+      {/* Jelentkezés áthelyezése */}
+      {selectedMoveRegistration && selectedMoveUser && (
+        <MoveRegistrationModal
+          registration={selectedMoveRegistration}
+          user={selectedMoveUser}
+          currentEventId={eventId}
+          onClose={() => {
+            setSelectedMoveRegistration(null);
+            setSelectedMoveUser(null);
+          }}
+          onMoved={(registrationId) =>
+            setRegistrations((prev) =>
+              prev.filter((r) => r.id !== registrationId)
+            )
           }
         />
       )}
@@ -92,6 +115,9 @@ export default function AdminEventRegistrations({ eventId }) {
                 Születési dátum
               </th>
               <th className="px-4 py-2 text-left font-semibold">Nem</th>
+              <th className="px-4 py-2 text-center font-semibold">
+                Áthelyezés
+              </th>
               <th className="px-4 py-2 text-center font-semibold">Törlés</th>
             </tr>
           </thead>
@@ -106,7 +132,7 @@ export default function AdminEventRegistrations({ eventId }) {
                     key={reg.id}
                     className="border-b border-[var(--ruby-red)]/10 bg-yellow-50"
                   >
-                    <td className="px-4 py-2" colSpan={6}>
+                    <td className="px-4 py-2" colSpan={7}>
                       <span className="text-[var(--rich-mahogany)]/70">
                         Ismeretlen felhasználó (ID: {reg.userId})
                       </span>
@@ -127,6 +153,24 @@ export default function AdminEventRegistrations({ eventId }) {
                   <td className="px-4 py-2">{user.phoneNumber || "-"}</td>
                   <td className="px-4 py-2">{user.birthDate || "-"}</td>
                   <td className="px-4 py-2">{user.gender || "-"}</td>
+
+                  {/* Áthelyezés ikon */}
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => {
+                        setSelectedMoveRegistration(reg);
+                        setSelectedMoveUser(user);
+                      }}
+                      className="
+                        p-2 rounded-lg 
+                        bg-emerald-500/10 text-emerald-700 border border-emerald-300
+                        hover:bg-emerald-500/20 hover:scale-105 active:scale-95
+                        transition
+                      "
+                    >
+                      <MoveRight size={16} />
+                    </button>
+                  </td>
 
                   {/* Kuka ikon */}
                   <td className="px-4 py-2 text-center">

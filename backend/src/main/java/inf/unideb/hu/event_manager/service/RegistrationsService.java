@@ -9,4 +9,5 @@ public interface RegistrationsService {
     public RegistrationsDto unregisterUserFromEvent(Long userId, Long eventId);
     public List<RegistrationsDto> getUserRegistrations(Long userId);
     public List<RegistrationsDto> getEventRegistrations(Long eventId);
+    public RegistrationsDto moveRegistration(Long id, Long eventId);
 }
