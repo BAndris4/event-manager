@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
-import useAuthStatus from "../hooks/useAuthStatus";
+import useAuthStatus from "../hooks/useMyRegistrationStatus";
 
 function MyRegistrations() {
   const [events, setEvents] = useState([]);

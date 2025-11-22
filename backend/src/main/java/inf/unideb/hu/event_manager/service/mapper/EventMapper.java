@@ -17,5 +17,4 @@ public interface EventMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     EventEntity eventDtoToEntity(EventDto dto);
-    List<EventEntity> eventDtoToEntity(List<EventDto> dtos);
 }

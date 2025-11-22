@@ -1,9 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 
 export default function useAuthStatus() {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const [role, setRole] = useState(null);
-  const [user, setUser] = useState(null); 
+  const [isAuthenticated, setIsAuthenticated] = useState(null); 
+  const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -12,15 +11,14 @@ export default function useAuthStatus() {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:8080/api/user/my", {
+      const res = await fetch("http://localhost:8080/api/registrations/my", {
         method: "GET",
         credentials: "include",
       });
 
       if (res.status === 401 || res.status === 403) {
         setIsAuthenticated(false);
-        setRole(null);
-        setUser(null);
+        setRegistrations([]);
         return;
       }
 
@@ -31,13 +29,10 @@ export default function useAuthStatus() {
       const data = await res.json();
 
       setIsAuthenticated(true);
-      setRole(data.role);
-      setUser(data);
+      setRegistrations(data);
     } catch (err) {
       setError(err.message);
       setIsAuthenticated(false);
-      setRole(null);
-      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -49,10 +44,9 @@ export default function useAuthStatus() {
 
   return {
     isAuthenticated,
-    role,
-    user,
+    registrations,
     loading,
     error,
-    refresh: checkAuth,
+    refresh: checkAuth
   };
 }

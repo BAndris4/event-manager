@@ -1,11 +1,10 @@
-// src/components/Navbar.jsx
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuthStatus from "../hooks/useAuthStatus";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, loading } = useAuthStatus();
+  const { isAuthenticated, loading, role } = useAuthStatus();
 
   const handleHomeClick = () => {
     if (location.pathname === "/") {
@@ -108,16 +107,32 @@ function Navbar() {
 
           {!loading && isAuthenticated === true && (
             <>
+              {role === "ROLE_ADMIN" && (
+                <button
+                  onClick={() => navigate("/admin")}
+                  className="
+                    hidden sm:inline-flex px-3 py-1.5 rounded-full text-sm font-medium
+                    text-[var(--rich-mahogany)]
+                    transition-all duration-300
+                    border border-[var(--ruby-red)]/10
+                    hover:border-[var(--ruby-red)]/20
+                    hover:bg-[var(--ruby-red)] hover:text-white hover:scale-105 active:scale-95
+                  "
+                >
+                  Admin
+                </button>
+              )}
+
               <button
                 onClick={() => navigate("/my-registrations")}
-                className={`
-                hidden sm:inline-flex px-3 py-1.5 rounded-full text-sm font-medium
-                text-[var(--rich-mahogany)]
-                transition-all duration-300
-                border border-[var(--ruby-red)]/10
-                hover:border-[var(--ruby-red)]/20
-                hover:bg-[var(--ruby-red)] hover:text-white hover:scale-105 active:scale-95
-              `}
+                className="
+                  hidden sm:inline-flex px-3 py-1.5 rounded-full text-sm font-medium
+                  text-[var(--rich-mahogany)]
+                  transition-all duration-300
+                  border border-[var(--ruby-red)]/10
+                  hover:border-[var(--ruby-red)]/20
+                  hover:bg-[var(--ruby-red)] hover:text-white hover:scale-105 active:scale-95
+                "
               >
                 Jelentkezéseim
               </button>
@@ -125,13 +140,13 @@ function Navbar() {
               <button
                 onClick={handleLogout}
                 className="
-                text-xs sm:text-sm px-3.5 py-1.5 rounded-full
-                bg-[var(--ruby-red)]/10 text-[var(--ruby-red)] font-semibold 
-                border border-[var(--ruby-red)]/30
-                transition-all duration-200
-                hover:bg-[var(--ruby-red)] hover:text-white
-                hover:scale-105 active:scale-95
-              "
+                  text-xs sm:text-sm px-3.5 py-1.5 rounded-full
+                  bg-[var(--ruby-red)]/10 text-[var(--ruby-red)] font-semibold 
+                  border border-[var(--ruby-red)]/30
+                  transition-all duration-200
+                  hover:bg-[var(--ruby-red)] hover:text-white
+                  hover:scale-105 active:scale-95
+                "
               >
                 Kijelentkezés
               </button>

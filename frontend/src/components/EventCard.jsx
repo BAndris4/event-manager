@@ -1,5 +1,5 @@
 import { Calendar, MapPin, Users } from "lucide-react";
-import useAuthStatus from "../hooks/useAuthStatus";
+import useMyRegistrationStatus from "../hooks/useMyRegistrationStatus";
 import { useState } from "react";
 
 function formatDate(dateString) {
@@ -27,7 +27,7 @@ function getCapacityStatus(event) {
 }
 
 function EventCard({ event }) {
-  const { isAuthenticated, registrations } = useAuthStatus();
+  const { isAuthenticated, registrations } = useMyRegistrationStatus();
   const [loading, setLoading] = useState(false);
 
   const status = getEventStatus(event);

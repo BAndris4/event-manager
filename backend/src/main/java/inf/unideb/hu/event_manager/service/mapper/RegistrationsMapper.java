@@ -19,6 +19,4 @@ public interface RegistrationsMapper {
     @Mapping(source = "userId", target = "user.id")
     @Mapping(source = "eventId", target = "event.id")
     RegistrationsEntity registrationsDtoToEntity(RegistrationsDto dto);
-
-    List<RegistrationsEntity> registrationsDtoToEntity(List<RegistrationsDto> dto);
 }
