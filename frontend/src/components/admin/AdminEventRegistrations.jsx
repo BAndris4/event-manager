@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
+import RegistrationDeleteModal from "./RegistrationDeleteModal";
 
 export default function AdminEventRegistrations({ eventId }) {
   const [registrations, setRegistrations] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [selectedRegistration, setSelectedRegistration] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/registrations/event/${eventId}`, {
@@ -59,56 +64,93 @@ export default function AdminEventRegistrations({ eventId }) {
   const userMap = new Map(users.map((u) => [u.id, u]));
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-sm border-collapse">
-        <thead>
-          <tr className="bg-[var(--ruby-red)]/10 text-[var(--rich-mahogany)] border-b border-[var(--ruby-red)]/20">
-            <th className="px-4 py-2 text-left font-semibold">Név</th>
-            <th className="px-4 py-2 text-left font-semibold">Email</th>
-            <th className="px-4 py-2 text-left font-semibold">Telefonszám</th>
-            <th className="px-4 py-2 text-left font-semibold">
-              Születési dátum
-            </th>
-            <th className="px-4 py-2 text-left font-semibold">Nem</th>
-          </tr>
-        </thead>
+    <>
+      {/* Törlés popup */}
+      {selectedRegistration && (
+        <RegistrationDeleteModal
+          registration={selectedRegistration}
+          user={selectedUser}
+          eventId={eventId}
+          onClose={() => {
+            setSelectedRegistration(null);
+            setSelectedUser(null);
+          }}
+          onDeleted={(userId) =>
+            setRegistrations((prev) => prev.filter((r) => r.userId !== userId))
+          }
+        />
+      )}
 
-        <tbody>
-          {registrations.map((reg) => {
-            const user = userMap.get(reg.userId);
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-[var(--ruby-red)]/10 text-[var(--rich-mahogany)] border-b border-[var(--ruby-red)]/20">
+              <th className="px-4 py-2 text-left font-semibold">Név</th>
+              <th className="px-4 py-2 text-left font-semibold">Email</th>
+              <th className="px-4 py-2 text-left font-semibold">Telefonszám</th>
+              <th className="px-4 py-2 text-left font-semibold">
+                Születési dátum
+              </th>
+              <th className="px-4 py-2 text-left font-semibold">Nem</th>
+              <th className="px-4 py-2 text-center font-semibold">Törlés</th>
+            </tr>
+          </thead>
 
-            if (!user) {
+          <tbody>
+            {registrations.map((reg) => {
+              const user = userMap.get(reg.userId);
+
+              if (!user) {
+                return (
+                  <tr
+                    key={reg.id}
+                    className="border-b border-[var(--ruby-red)]/10 bg-yellow-50"
+                  >
+                    <td className="px-4 py-2" colSpan={6}>
+                      <span className="text-[var(--rich-mahogany)]/70">
+                        Ismeretlen felhasználó (ID: {reg.userId})
+                      </span>
+                    </td>
+                  </tr>
+                );
+              }
+
               return (
                 <tr
                   key={reg.id}
-                  className="border-b border-[var(--ruby-red)]/10 bg-yellow-50"
+                  className="border-b border-[var(--ruby-red)]/10 hover:bg-[var(--ruby-red)]/5 transition"
                 >
-                  <td className="px-4 py-2" colSpan={5}>
-                    <span className="text-[var(--rich-mahogany)]/70">
-                      Ismeretlen felhasználó (ID: {reg.userId})
-                    </span>
+                  <td className="px-4 py-2">
+                    {user.firstName} {user.lastName}
+                  </td>
+                  <td className="px-4 py-2">{user.email}</td>
+                  <td className="px-4 py-2">{user.phoneNumber || "-"}</td>
+                  <td className="px-4 py-2">{user.birthDate || "-"}</td>
+                  <td className="px-4 py-2">{user.gender || "-"}</td>
+
+                  {/* Kuka ikon */}
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => {
+                        setSelectedRegistration(reg);
+                        setSelectedUser(user);
+                      }}
+                      className="
+                        p-2 rounded-lg 
+                        bg-red-500/10 text-red-700 border border-red-300
+                        hover:bg-red-500/20 hover:scale-105 active:scale-95
+                        transition
+                      "
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </td>
                 </tr>
               );
-            }
-
-            return (
-              <tr
-                key={reg.id}
-                className="border-b border-[var(--ruby-red)]/10 hover:bg-[var(--ruby-red)]/5 transition"
-              >
-                <td className="px-4 py-2">
-                  {user.firstName} {user.lastName}
-                </td>
-                <td className="px-4 py-2">{user.email}</td>
-                <td className="px-4 py-2">{user.phoneNumber || "-"}</td>
-                <td className="px-4 py-2">{user.birthDate || "-"}</td>
-                <td className="px-4 py-2">{user.gender || "-"}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
