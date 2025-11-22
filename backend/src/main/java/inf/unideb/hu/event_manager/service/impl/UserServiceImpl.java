@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -41,6 +43,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserMyDto getUserById(Long id) {
         return userMapper.userMyEntityToDto(userRepository.findById(id).orElse(null));
+    }
+
+    @Override
+    public List<UserMyDto> getUsersByIds(List<Long> ids) {
+        return userRepository.findAllById(ids)
+                .stream()
+                .map(userMapper::userMyEntityToDto)
+                .toList();
     }
 
     @Override

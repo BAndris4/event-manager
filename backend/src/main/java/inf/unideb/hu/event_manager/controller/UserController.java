@@ -5,6 +5,8 @@ import inf.unideb.hu.event_manager.service.dto.UserMyDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -36,4 +38,10 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<UserMyDto>> getUsersByIds(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(userService.getUsersByIds(ids));
+    }
+
 }
