@@ -11,7 +11,8 @@ export default function AdminEventRegistrations({ eventId }) {
     })
       .then((res) => res.json())
       .then((data) => setRegistrations(data))
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [eventId]);
 
   useEffect(() => {
@@ -27,17 +28,16 @@ export default function AdminEventRegistrations({ eventId }) {
       try {
         const res = await fetch("http://localhost:8080/api/user/batch", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(userIds),
         });
 
         const data = await res.json();
-        setUsers(data);
+        setUsers(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Batch user fetch failed:", err);
+        setUsers([]);
       } finally {
         setLoading(false);
       }
@@ -77,14 +77,20 @@ export default function AdminEventRegistrations({ eventId }) {
           {registrations.map((reg) => {
             const user = userMap.get(reg.userId);
 
-            if (!user)
+            if (!user) {
               return (
-                <tr key={reg.id}>
+                <tr
+                  key={reg.id}
+                  className="border-b border-[var(--ruby-red)]/10 bg-yellow-50"
+                >
                   <td className="px-4 py-2" colSpan={5}>
-                    Betöltés...
+                    <span className="text-[var(--rich-mahogany)]/70">
+                      Ismeretlen felhasználó (ID: {reg.userId})
+                    </span>
                   </td>
                 </tr>
               );
+            }
 
             return (
               <tr

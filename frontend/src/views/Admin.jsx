@@ -1,16 +1,58 @@
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import AdminEventList from "../components/admin/AdminEventList";
+import CreateEventModal from "../components/admin/CreateEventModal";
+import UpdateEventModal from "../components/admin/UpdateEventModal";
+import DeleteEventModal from "../components/admin/DeleteEventModal";
 
 export default function Admin() {
+  const [showCreate, setShowCreate] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(null);
+  const [showDelete, setShowDelete] = useState(null);
+
   return (
     <>
-      <Navbar />
-      <div className="max-w-5xl mx-auto px-4 mt-6">
-        <h1 className="text-2xl font-bold text-[var(--rich-mahogany)] mb-6">
-          Admin Panel
-        </h1>
+      {showCreate && <CreateEventModal onClose={() => setShowCreate(false)} />}
 
-        <AdminEventList />
+      {showUpdate && (
+        <UpdateEventModal
+          event={showUpdate}
+          onClose={() => setShowUpdate(null)}
+        />
+      )}
+
+      {showDelete && (
+        <DeleteEventModal
+          event={showDelete}
+          onClose={() => setShowDelete(null)}
+        />
+      )}
+
+      <Navbar />
+
+      <div className="max-w-4xl mx-auto mt-10 px-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-[var(--rich-mahogany)]">
+            Admin Panel
+          </h1>
+
+          <button
+            onClick={() => setShowCreate(true)}
+            className="
+              px-4 py-2 rounded-full bg-[var(--ruby-red)] text-white 
+              font-semibold shadow-md transition 
+              hover:scale-105 active:scale-95 
+              hover:bg-[var(--ruby-red)]/90
+            "
+          >
+            + Új esemény
+          </button>
+        </div>
+
+        <AdminEventList
+          onEdit={(ev) => setShowUpdate(ev)}
+          onDelete={(ev) => setShowDelete(ev)}
+        />
       </div>
     </>
   );

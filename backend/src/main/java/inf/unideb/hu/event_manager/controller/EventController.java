@@ -1,7 +1,9 @@
 package inf.unideb.hu.event_manager.controller;
 
 import inf.unideb.hu.event_manager.service.EventService;
+import inf.unideb.hu.event_manager.service.dto.EventCreateDto;
 import inf.unideb.hu.event_manager.service.dto.EventDto;
+import inf.unideb.hu.event_manager.service.dto.EventUpdateDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,11 @@ public class EventController {
         this.eventService = eventService;
     }
 
+    @GetMapping
+    public List<EventDto> getEvents() {
+        return eventService.getAllEvents();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
         try {
@@ -28,21 +35,19 @@ public class EventController {
         }
     }
 
-    @GetMapping
-    public List<EventDto> getEvents() {
-        return eventService.getAllEvents();
-    }
-
     @PostMapping
-    public ResponseEntity<EventDto> postEvent(@RequestBody @Valid EventDto eventDto) {
+    public ResponseEntity<EventDto> postEvent(@RequestBody @Valid EventCreateDto eventDto) {
         EventDto created = eventService.createEvent(eventDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDto> updateEvent(@RequestBody @Valid EventDto eventDto, @PathVariable Long id) {
+    public ResponseEntity<EventDto> updateEvent(
+            @PathVariable Long id,
+            @RequestBody @Valid EventUpdateDto dto
+    ) {
         try {
-            return ResponseEntity.ok(eventService.updateEvent(id, eventDto));
+            return ResponseEntity.ok(eventService.updateEvent(id, dto));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

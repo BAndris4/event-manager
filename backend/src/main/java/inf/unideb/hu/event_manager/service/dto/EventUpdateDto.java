@@ -8,9 +8,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EventDto {
-
-    private Long id;
+public class EventUpdateDto {
 
     private String title;
 
@@ -23,9 +21,4 @@ public class EventDto {
     private String location;
 
     private Integer capacity;
-
-    private Long registered;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

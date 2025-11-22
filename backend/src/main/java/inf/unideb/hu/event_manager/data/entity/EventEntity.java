@@ -33,10 +33,10 @@ public class EventEntity {
     @Column(name = "endDate")
     private LocalDateTime endDate;
 
-    @Column(name = "location")
+    @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "capacity")
+    @Column(name = "capacity", nullable = false)
     private Integer capacity;
 
     @Column(name = "createdAt")
