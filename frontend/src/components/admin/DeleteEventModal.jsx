@@ -32,14 +32,14 @@ export default function DeleteEventModal({ event, onClose }) {
         bg-black/50 backdrop-blur-sm
         flex items-center justify-center
         z-50 px-4
-    "
+      "
       onClick={onClose}
     >
       <div
         className="
           w-full max-w-md bg-white 
           rounded-2xl p-6 
-          border border-red-300 shadow-xl
+          border border-red-300 shadow-xl z-[999]
         "
         onClick={(e) => e.stopPropagation()}
       >
@@ -52,6 +52,15 @@ export default function DeleteEventModal({ event, onClose }) {
         <p className="font-semibold text-[var(--ruby-red)] mb-6">
           {event.title}
         </p>
+
+        {/* ⚠ Figyelmeztetés ha vannak jelentkezők */}
+        {event.registered > 0 && (
+          <p className="mb-4 p-3 rounded-lg bg-yellow-100 text-yellow-800 border border-yellow-300">
+            Figyelem! Ehhez az eseményhez <strong>{event.registered}</strong>{" "}
+            jelentkezés tartozik. Az esemény törlésével ezek a foglalások is
+            véglegesen törlődnek!
+          </p>
+        )}
 
         {error && (
           <p className="mb-4 p-2 rounded-lg bg-red-100 text-red-700 border border-red-300">

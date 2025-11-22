@@ -8,6 +8,7 @@ import inf.unideb.hu.event_manager.service.dto.EventCreateDto;
 import inf.unideb.hu.event_manager.service.dto.EventDto;
 import inf.unideb.hu.event_manager.service.dto.EventUpdateDto;
 import inf.unideb.hu.event_manager.service.mapper.EventMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -76,9 +77,11 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventEntityToDto(eventRepository.save(entity));
     }
 
+    @Transactional
     @Override
     public EventDto deleteEvent(Long id) {
         EventEntity deletedEvent = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event with id " + id + " not found!"));
+        registrationsRepository.deleteByEventId(id);
         eventRepository.deleteById(id);
         return eventMapper.eventEntityToDto(deletedEvent);
     }

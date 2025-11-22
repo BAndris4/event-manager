@@ -28,8 +28,6 @@ public class RegistrationsServiceImpl implements RegistrationsService {
         this.registrationsMapper = registrationsMapper;
     }
 
-
-
     @Override
     public RegistrationsDto registerUserToEvent(Long userId, Long eventId) {
         if (registrationsRepository.existsByUserIdAndEventId(userId, eventId)) {

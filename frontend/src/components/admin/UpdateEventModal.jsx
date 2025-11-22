@@ -77,7 +77,7 @@ export default function UpdateEventModal({ event, onClose }) {
       <div
         className="
           w-full max-w-2xl bg-white rounded-2xl shadow-2xl 
-          border border-[var(--ruby-red)]/20 p-8 space-y-6
+          border border-[var(--ruby-red)]/20 p-8 space-y-6 z-[999]
         "
         onClick={(e) => e.stopPropagation()}
       >
