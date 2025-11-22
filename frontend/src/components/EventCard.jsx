@@ -17,8 +17,16 @@ function formatDate(dateString) {
 function getEventStatus(event) {
   const now = new Date();
   const start = new Date(event.startDate);
-  if (now > start) return "lezarult";
-  return "meg_kezdodik";
+  const end = event.endDate ? new Date(event.endDate) : null;
+
+  if (end) {
+    if (now > end) return "lezarult";
+    if (now >= start && now <= end) return "folyamatban";
+    return "meg_kezdodik";
+  } else {
+    if (now > start) return "lezarult";
+    return "meg_kezdodik";
+  }
 }
 
 function getCapacityStatus(event) {
@@ -86,13 +94,14 @@ function EventCard({ event }) {
 
         <div className="flex items-center gap-3">
           {status === "lezarult" && (
-            <span
-              className="
-                text-xs font-semibold px-2 py-1 rounded-xl border
-                bg-gray-200 text-gray-600 border-gray-300
-              "
-            >
+            <span className="text-xs font-semibold px-2 py-1 rounded-xl border bg-gray-200 text-gray-600 border-gray-300">
               Lezárult
+            </span>
+          )}
+
+          {status === "folyamatban" && (
+            <span className="text-xs font-semibold px-2 py-1 rounded-xl bg-green-200 text-green-700 border border-green-300">
+              Folyamatban
             </span>
           )}
 
@@ -108,10 +117,13 @@ function EventCard({ event }) {
           )}
         </div>
 
+        {/* Dátum(ok) */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--rich-mahogany)]/75">
           <span className="flex items-center gap-1">
             <Calendar size={16} className="text-[var(--ruby-red)]" />
-            {formatDate(event.startDate)}
+            {event.endDate
+              ? `${formatDate(event.startDate)} – ${formatDate(event.endDate)}`
+              : formatDate(event.startDate)}
           </span>
 
           {event.location && (
