@@ -2,6 +2,7 @@ package inf.unideb.hu.event_manager.service.impl;
 
 import inf.unideb.hu.event_manager.data.entity.EventEntity;
 import inf.unideb.hu.event_manager.data.repository.EventRepository;
+import inf.unideb.hu.event_manager.data.repository.RegistrationsRepository;
 import inf.unideb.hu.event_manager.service.EventService;
 import inf.unideb.hu.event_manager.service.dto.EventDto;
 import inf.unideb.hu.event_manager.service.mapper.EventMapper;
@@ -17,22 +18,29 @@ public class EventServiceImpl implements EventService {
 
     private final EventMapper eventMapper;
 
-    public EventServiceImpl(EventRepository eventRepository, EventMapper eventMapper) {
+    private final RegistrationsRepository registrationsRepository;
+
+    public EventServiceImpl(EventRepository eventRepository, EventMapper eventMapper, RegistrationsRepository registrationsRepository) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.registrationsRepository = registrationsRepository;
     }
 
     @Override
     public List<EventDto> getAllEvents() {
-        return eventMapper.eventEntityToDto(eventRepository.findAll());
+        List<EventDto> dtos = eventMapper.eventEntityToDto(eventRepository.findAll());
+
+        dtos.forEach(dto -> {
+            dto.setRegistered(registrationsRepository.countByEventId(dto.getId()));
+        });
+        return dtos;
     }
 
     @Override
     public EventDto getEventById(Long id) {
-        return eventMapper.eventEntityToDto(
-                eventRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Event with id " + id + " not found!"))
-        );
+        EventDto dto = eventMapper.eventEntityToDto(eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event with id " + id + " not found!")));
+        dto.setRegistered(registrationsRepository.countByEventId(id));
+        return dto;
     }
 
     @Override

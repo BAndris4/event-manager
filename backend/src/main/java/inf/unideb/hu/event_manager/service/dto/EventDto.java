@@ -36,6 +36,9 @@ public class EventDto {
     @NotNull(message = "Capacity is required.")
     @Min(value = 1, message = "Capacity must be at least 1.")
     private Integer capacity;
+
+    @NotNull(message = "Number of registered users is required.")
+    private Long registered;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

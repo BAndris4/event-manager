@@ -79,7 +79,7 @@ function MyRegistrations() {
 
         {!loadingEvents && !error && events.length === 0 && (
           <div className="rounded-2xl border border-[var(--ruby-red)]/15 bg-[var(--ruby-red)]/5 px-4 py-4 text-sm text-[var(--rich-mahogany)]/80">
-            Még nem jelentkeztél egyetlen eseményre sem. 📭
+            Még nem jelentkeztél egyetlen eseményre sem.
           </div>
         )}
 

@@ -32,7 +32,6 @@ public class DataSeeder {
                 userRole = new RoleEntity();
                 userRole.setRoleName("ROLE_USER");
                 roleRepository.save(userRole);
-                System.out.println("Created role: ROLE_USER");
             }
 
             RoleEntity adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
@@ -40,10 +39,9 @@ public class DataSeeder {
                 adminRole = new RoleEntity();
                 adminRole.setRoleName("ROLE_ADMIN");
                 roleRepository.save(adminRole);
-                System.out.println("Created role: ROLE_ADMIN");
             }
 
-            UserEntity existingUser = userRepository.findByEmail("user@example.com");
+            UserEntity existingUser = userRepository.findByEmail("user@user.com");
             if (existingUser == null) {
                 UserEntity user = new UserEntity();
                 user.setFirstName("John");
@@ -52,8 +50,6 @@ public class DataSeeder {
                 user.setPassword(passwordEncoder.encode("user"));
                 user.setRole(userRole);
                 userRepository.save(user);
-
-                System.out.println("Seeded USER: user@user.com / user");
             }
 
             UserEntity existingAdmin = userRepository.findByEmail("admin@admin.com");
@@ -65,53 +61,58 @@ public class DataSeeder {
                 admin.setPassword(passwordEncoder.encode("admin"));
                 admin.setRole(adminRole);
                 userRepository.save(admin);
-
-                System.out.println("Seeded ADMIN: admin@admin.com / admin");
             }
 
-            EventEntity workshop = eventRepository.findByTitle("Java Spring Boot Workshop");
-            if (workshop == null) {
-                workshop = new EventEntity();
-                workshop.setTitle("Java Spring Boot Workshop");
-                workshop.setDescription("Kezdő és haladó Spring Boot technikák.");
-                workshop.setLocation("Debreceni Egyetem Informatikai Kar");
-                workshop.setStartDate(LocalDateTime.of(2026, 2, 15, 10, 0));
-                workshop.setEndDate(LocalDateTime.of(2026, 2, 15, 16, 0));
-                workshop.setCapacity(50);
-                workshop.setCreatedAt(LocalDateTime.now());
-                eventRepository.save(workshop);
-
-                System.out.println("Seeded event: Java Spring Boot Workshop");
+            EventEntity pastEvent = eventRepository.findByTitle("Télbúcsúztató Fesztivál");
+            if (pastEvent == null) {
+                pastEvent = new EventEntity();
+                pastEvent.setTitle("Télbúcsúztató Fesztivál");
+                pastEvent.setDescription("Zenés-ünnepi programok a főtéren.");
+                pastEvent.setLocation("Debrecen, Kossuth tér");
+                pastEvent.setStartDate(LocalDateTime.now().minusDays(10));
+                pastEvent.setCapacity(100);
+                pastEvent.setCreatedAt(LocalDateTime.now());
+                pastEvent.setUpdatedAt(LocalDateTime.now());
+                eventRepository.save(pastEvent);
             }
 
-            EventEntity retro = eventRepository.findByTitle("Retro Gamer Kiállítás");
-            if (retro == null) {
-                retro = new EventEntity();
-                retro.setTitle("Retro Gamer Kiállítás");
-                retro.setDescription("Ikonikus játékkonzolok és játékgépek kiállítása.");
-                retro.setLocation("Agóra Tudományos Élményközpont");
-                retro.setStartDate(LocalDateTime.of(2026, 3, 8, 9, 0));
-                retro.setEndDate(LocalDateTime.of(2026, 3, 8, 18, 0));
-                retro.setCapacity(200);
-                retro.setCreatedAt(LocalDateTime.now());
-                eventRepository.save(retro);
-
-                System.out.println("Seeded event: Retro Gamer Kiállítás");
+            EventEntity futureEvent1 = eventRepository.findByTitle("Kódolás Éjszakája");
+            if (futureEvent1 == null) {
+                futureEvent1 = new EventEntity();
+                futureEvent1.setTitle("Kódolás Éjszakája");
+                futureEvent1.setDescription("Egész éjszakás programozó-maraton kezdőknek és haladóknak.");
+                futureEvent1.setLocation("Debreceni Egyetem Informatikai Kar");
+                futureEvent1.setStartDate(LocalDateTime.now().plusDays(14));
+                futureEvent1.setCapacity(80);
+                futureEvent1.setCreatedAt(LocalDateTime.now());
+                futureEvent1.setUpdatedAt(LocalDateTime.now());
+                eventRepository.save(futureEvent1);
             }
 
-            EventEntity charityRun = eventRepository.findByTitle("Jótékonysági Futás a Gyermekklinikáért");
-            if (charityRun == null) {
-                charityRun = new EventEntity();
-                charityRun.setTitle("Jótékonysági Futás a Gyermekklinikáért");
-                charityRun.setDescription("5 km-es futás a Nagyerdőben a beteg gyerekek támogatására.");
-                charityRun.setLocation("Nagyerdei Stadion");
-                charityRun.setStartDate(LocalDateTime.of(2026, 4, 12, 9, 30));
-                charityRun.setEndDate(LocalDateTime.of(2026, 4, 12, 12, 0));
-                charityRun.setCapacity(500);
-                charityRun.setCreatedAt(LocalDateTime.now());
-                eventRepository.save(charityRun);
+            EventEntity futureEvent2 = eventRepository.findByTitle("Tavaszi Egyetemi Sportnap");
+            if (futureEvent2 == null) {
+                futureEvent2 = new EventEntity();
+                futureEvent2.setTitle("Tavaszi Egyetemi Sportnap");
+                futureEvent2.setDescription("Foci, röplabda, futás és még sok sportos kihívás.");
+                futureEvent2.setLocation("Nagyerdei Stadion");
+                futureEvent2.setStartDate(LocalDateTime.now().plusDays(30));
+                futureEvent2.setCapacity(300);
+                futureEvent2.setCreatedAt(LocalDateTime.now());
+                futureEvent2.setUpdatedAt(LocalDateTime.now());
+                eventRepository.save(futureEvent2);
+            }
 
-                System.out.println("Seeded event: Jótékonysági Futás a Gyermekklinikáért");
+            EventEntity singleSlot = eventRepository.findByTitle("VIP Bor Kóstoló – Limitált");
+            if (singleSlot == null) {
+                singleSlot = new EventEntity();
+                singleSlot.setTitle("VIP Bor Kóstoló – Limitált");
+                singleSlot.setDescription("Exkluzív borok 1 résztvevőnek.");
+                singleSlot.setLocation("Tokaj – Borvidék");
+                singleSlot.setStartDate(LocalDateTime.now().plusDays(7));
+                singleSlot.setCapacity(1);
+                singleSlot.setCreatedAt(LocalDateTime.now());
+                singleSlot.setUpdatedAt(LocalDateTime.now());
+                eventRepository.save(singleSlot);
             }
         };
     }

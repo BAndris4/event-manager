@@ -14,72 +14,59 @@ function formatDate(dateString) {
   });
 }
 
+function getEventStatus(event) {
+  const now = new Date();
+  const start = new Date(event.startDate);
+  if (now > start) return "lezarult";
+  return "meg_kezdodik";
+}
+
+function getCapacityStatus(event) {
+  const { capacity, registered } = event;
+  return registered >= capacity ? "tele" : "vanhely";
+}
+
 function EventCard({ event }) {
-  const { isAuthenticated, registrations, refresh } = useAuthStatus();
+  const { isAuthenticated, registrations } = useAuthStatus();
   const [loading, setLoading] = useState(false);
 
-  const isRegistered = registrations.some(
-    (reg) => reg.eventId === event.id
-  );
+  const status = getEventStatus(event);
+  const isFull = getCapacityStatus(event) === "tele";
+  const isRegistered = registrations.some((reg) => reg.eventId === event.id);
 
-  const handleRegister = async () => {
+  const handleRequest = async (method) => {
     setLoading(true);
     try {
       const res = await fetch(
         `http://localhost:8080/api/registrations/${event.id}`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
+        { method, credentials: "include" }
       );
-      if (!res.ok) throw new Error("Nem sikerült a jelentkezés");
-      await refresh();
-    } finally {
+      if (!res.ok) throw new Error("Hiba a kérelemben");
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
       setLoading(false);
     }
   };
 
-  const handleUnregister = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `http://localhost:8080/api/registrations/${event.id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (!res.ok) throw new Error("Nem sikerült a lemondás");
-      await refresh();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleRegister = () => handleRequest("POST");
+  const handleUnregister = () => handleRequest("DELETE");
 
   return (
     <article
       className="
-        group
-        cursor-pointer
-        w-full
-        flex items-center
-        gap-6
-        rounded-3xl
-        bg-[var(--white)]
+        group cursor-pointer w-full flex items-center gap-6
+        rounded-3xl bg-[var(--white)]
         border border-[var(--ruby-red)]/10
-        shadow-sm
-        hover:shadow-xl
-        hover:-translate-y-1
-        transition-all duration-300
-        p-5
+        shadow-sm hover:shadow-xl hover:-translate-y-1
+        transition-all duration-300 p-5
       "
     >
       <div
         className="
-          min-w-20 min-h-20
-          flex items-center justify-center
-          rounded-2xl
-          bg-gradient-to-br from-[var(--ruby-red)] to-[var(--burnt-peach)]
+          min-w-20 min-h-20 flex items-center justify-center
+          rounded-2xl bg-gradient-to-br
+          from-[var(--ruby-red)] to-[var(--burnt-peach)]
           text-[var(--white)] shadow-md
           group-hover:scale-105 transition-transform duration-300
         "
@@ -87,7 +74,6 @@ function EventCard({ event }) {
         <Calendar size={32} strokeWidth={2.5} />
       </div>
 
-      {/* Középső tartalom */}
       <div className="flex flex-col gap-2 flex-1">
         <h2
           className="
@@ -97,6 +83,30 @@ function EventCard({ event }) {
         >
           {event.title}
         </h2>
+
+        <div className="flex items-center gap-3">
+          {status === "lezarult" && (
+            <span
+              className="
+                text-xs font-semibold px-2 py-1 rounded-xl border
+                bg-gray-200 text-gray-600 border-gray-300
+              "
+            >
+              Lezárult
+            </span>
+          )}
+
+          {isFull && (
+            <span
+              className="
+                text-xs font-semibold px-2 py-1 rounded-xl
+                bg-red-200 text-red-700 border border-red-300
+              "
+            >
+              Telt ház
+            </span>
+          )}
+        </div>
 
         <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--rich-mahogany)]/75">
           <span className="flex items-center gap-1">
@@ -111,9 +121,19 @@ function EventCard({ event }) {
             </span>
           )}
 
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 font-semibold">
             <Users size={16} className="text-[var(--ruby-red)]/80" />
-            {event.capacity ?? "n/a"} fő
+            <span
+              className={
+                isFull
+                  ? "text-red-600"
+                  : event.registered >= event.capacity * 0.75
+                  ? "text-[var(--burnt-peach)]"
+                  : "text-[var(--black-cherry)]/80"
+              }
+            >
+              {event.registered} / {event.capacity} fő
+            </span>
           </span>
         </div>
 
@@ -123,6 +143,7 @@ function EventCard({ event }) {
           </p>
         )}
       </div>
+
       {isAuthenticated && (
         <div className="min-w-36 flex justify-end">
           {isRegistered ? (
@@ -139,12 +160,12 @@ function EventCard({ event }) {
                 disabled:opacity-50 disabled:cursor-not-allowed
               "
             >
-              {loading ? "..." : "Jelentkezés visszavonása"}
+              {loading ? "Folyamatban..." : "Jelentkezés visszavonása"}
             </button>
           ) : (
             <button
               onClick={handleRegister}
-              disabled={loading}
+              disabled={loading || isFull || status !== "meg_kezdodik"}
               className="
                 px-4 py-2 rounded-2xl text-sm font-semibold
                 bg-[var(--ruby-red)]/20 text-[var(--black-cherry)]
@@ -155,12 +176,17 @@ function EventCard({ event }) {
                 disabled:opacity-50 disabled:cursor-not-allowed
               "
             >
-              {loading ? "..." : "Jelentkezem"}
+              {loading
+                ? "Folyamatban..."
+                : isFull
+                ? "Telt ház"
+                : status !== "meg_kezdodik"
+                ? "Nem elérhető"
+                : "Jelentkezem"}
             </button>
           )}
         </div>
       )}
-
     </article>
   );
 }

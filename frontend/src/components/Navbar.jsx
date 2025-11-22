@@ -22,7 +22,6 @@ function Navbar() {
         credentials: "include",
       });
       navigate(0);
-      
     } catch (err) {
       console.error("Logout failed", err);
     }
@@ -33,17 +32,9 @@ function Navbar() {
       className="
         sticky top-0 z-20 
         bg-[var(--white)]/90 backdrop-blur-md
-        border-b border-[var(--ruby-red)]/10
-        transition-all duration-300
-      "
+        border-b border-[var(--ruby-red)]/10 transition-all duration-300"
     >
-      <nav
-        className="
-          max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 
-          h-16 flex items-center justify-between
-        "
-      >
-    
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <button
           onClick={handleHomeClick}
           className="flex items-center gap-3 group select-none"
@@ -116,10 +107,10 @@ function Navbar() {
           )}
 
           {!loading && isAuthenticated === true && (
-          <>
-            <button
-              onClick={() => navigate("/my-registrations")}
-              className={`
+            <>
+              <button
+                onClick={() => navigate("/my-registrations")}
+                className={`
                 hidden sm:inline-flex px-3 py-1.5 rounded-full text-sm font-medium
                 text-[var(--rich-mahogany)]
                 transition-all duration-300
@@ -127,13 +118,13 @@ function Navbar() {
                 hover:border-[var(--ruby-red)]/20
                 hover:bg-[var(--ruby-red)] hover:text-white hover:scale-105 active:scale-95
               `}
-            >
-              Jelentkezéseim
-            </button>
+              >
+                Jelentkezéseim
+              </button>
 
-            <button
-              onClick={handleLogout}
-              className="
+              <button
+                onClick={handleLogout}
+                className="
                 text-xs sm:text-sm px-3.5 py-1.5 rounded-full
                 bg-[var(--ruby-red)]/10 text-[var(--ruby-red)] font-semibold 
                 border border-[var(--ruby-red)]/30
@@ -141,11 +132,11 @@ function Navbar() {
                 hover:bg-[var(--ruby-red)] hover:text-white
                 hover:scale-105 active:scale-95
               "
-            >
-              Kijelentkezés
-            </button>
-          </>
-        )}
+              >
+                Kijelentkezés
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </header>
