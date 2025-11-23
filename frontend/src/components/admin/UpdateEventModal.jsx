@@ -67,10 +67,10 @@ export default function UpdateEventModal({ event, onClose }) {
   return (
     <div
       className="
-        fixed inset-0
+        -top-10 fixed inset-0
         bg-black/50 backdrop-blur-sm
         flex items-center justify-center
-        z-50 px-4
+        z-50
     "
       onClick={onClose}
     >

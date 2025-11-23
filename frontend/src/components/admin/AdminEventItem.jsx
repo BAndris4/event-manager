@@ -2,11 +2,29 @@ import { useState } from "react";
 import AdminEventRegistrations from "./AdminEventRegistrations";
 import UpdateEventModal from "./UpdateEventModal";
 import DeleteEventModal from "./DeleteEventModal";
+import EventSummaryRow from "./EventSummaryRow";
+
+function getEventStatus(event) {
+  const now = new Date();
+  const start = new Date(event.startDate);
+  const end = event.endDate ? new Date(event.endDate) : null;
+
+  if (end) {
+    if (now > end) return "lezarult";
+    if (now >= start && now <= end) return "folyamatban";
+    return "meg_kezdodik";
+  } else {
+    if (now > start) return "lezarult";
+    return "meg_kezdodik";
+  }
+}
 
 export default function AdminEventItem({ event }) {
   const [open, setOpen] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+
+  const status = getEventStatus(event);
 
   return (
     <>
@@ -22,12 +40,12 @@ export default function AdminEventItem({ event }) {
         <button
           onClick={() => setOpen(!open)}
           className="
-            w-full flex justify-between items-center px-4 py-4 text-left 
+            w-full flex justify-between items-center px-4 py-4 text-left
             text-[var(--rich-mahogany)] font-semibold
             hover:bg-[var(--ruby-red)]/10 transition-all
           "
         >
-          <span className="text-lg">{event.title}</span>
+          <EventSummaryRow event={event} status={status} />
 
           <span className="text-[var(--ruby-red)] font-bold text-xl">
             {open ? "▲" : "▼"}
@@ -85,28 +103,6 @@ export default function AdminEventItem({ event }) {
                 <p className="text-[var(--rich-mahogany)] font-medium">
                   {event.endDate
                     ? new Date(event.endDate).toLocaleString("hu-HU")
-                    : "-"}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-[var(--rich-mahogany)]/60">
-                  Létrehozva
-                </p>
-                <p className="text-[var(--rich-mahogany)] font-medium">
-                  {event.createdAt
-                    ? new Date(event.createdAt).toLocaleString("hu-HU")
-                    : "-"}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-[var(--rich-mahogany)]/60">
-                  Módosítva
-                </p>
-                <p className="text-[var(--rich-mahogany)] font-medium">
-                  {event.updatedAt
-                    ? new Date(event.updatedAt).toLocaleString("hu-HU")
                     : "-"}
                 </p>
               </div>
