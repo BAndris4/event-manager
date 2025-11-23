@@ -51,10 +51,15 @@ public class RegistrationsController {
         return ResponseEntity.ok(registrationsService.registerUserToEvent(userId, eventId));
     }
 
-    @DeleteMapping("/{eventId}")
+    @DeleteMapping("/me/{eventId}")
     public ResponseEntity<RegistrationsDto> unregisterUser(@PathVariable Long eventId) {
         Long userId = getCurrentUserId();
         return ResponseEntity.ok(registrationsService.unregisterUserFromEvent(userId, eventId));
+    }
+
+    @DeleteMapping("/{registrationId}")
+    public ResponseEntity<RegistrationsDto> deleteRegistration(@PathVariable Long registrationId) {
+        return ResponseEntity.ok(registrationsService.deleteRegistration(registrationId));
     }
 
     @GetMapping("/my")

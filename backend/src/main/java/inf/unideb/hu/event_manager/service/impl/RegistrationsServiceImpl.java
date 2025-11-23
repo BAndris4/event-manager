@@ -100,4 +100,11 @@ public class RegistrationsServiceImpl implements RegistrationsService {
         return registrationsMapper.registrationsEntityToDto(registrationsRepository.save(reg));
     }
 
+    @Override
+    public RegistrationsDto deleteRegistration(Long id) {
+        RegistrationsEntity entity = registrationsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
+        registrationsRepository.delete(entity);
+        return registrationsMapper.registrationsEntityToDto(entity);
+    }
+
 }

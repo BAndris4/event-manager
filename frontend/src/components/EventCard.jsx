@@ -42,12 +42,12 @@ function EventCard({ event }) {
   const isFull = getCapacityStatus(event) === "tele";
   const isRegistered = registrations.some((reg) => reg.eventId === event.id);
 
-  const handleRequest = async (method) => {
+  const handleUnregister = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/registrations/${event.id}`,
-        { method, credentials: "include" }
+        `http://localhost:8080/api/registrations/me/${event.id}`,
+        { method: "DELETE", credentials: "include" }
       );
       if (!res.ok) throw new Error("Hiba a kérelemben");
       window.location.reload();
@@ -57,8 +57,20 @@ function EventCard({ event }) {
     }
   };
 
-  const handleRegister = () => handleRequest("POST");
-  const handleUnregister = () => handleRequest("DELETE");
+  const handleRegister = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/registrations/${event.id}`,
+        { method: "POST", credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Hiba a kérelemben");
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
+    }
+  };
 
   return (
     <article
@@ -117,7 +129,6 @@ function EventCard({ event }) {
           )}
         </div>
 
-        {/* Dátum(ok) */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--rich-mahogany)]/75">
           <span className="flex items-center gap-1">
             <Calendar size={16} className="text-[var(--ruby-red)]" />

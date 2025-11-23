@@ -1,4 +1,3 @@
-// src/components/admin/AdminEventList.jsx
 import { useEffect, useState } from "react";
 import AdminEventItem from "./AdminEventItem";
 

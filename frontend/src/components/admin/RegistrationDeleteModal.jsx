@@ -16,7 +16,7 @@ export default function RegistrationDeleteModal({
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/registrations/${eventId}`,
+        `http://localhost:8080/api/registrations/${registration.id}`,
         {
           method: "DELETE",
           credentials: "include",

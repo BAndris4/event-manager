@@ -25,10 +25,10 @@ export default function MoveRegistrationModal({
         const filtered = Array.isArray(data)
           ? data.filter(
               (e) =>
-                e.id !== currentEventId && // ne legyen benne a jelenlegi esemény
+                e.id !== currentEventId &&
                 e.capacity != null &&
                 e.registered != null &&
-                e.registered < e.capacity // legyen benne még hely
+                e.registered < e.capacity
             )
           : [];
 

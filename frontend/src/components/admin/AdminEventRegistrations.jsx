@@ -70,12 +70,10 @@ export default function AdminEventRegistrations({ eventId }) {
 
   return (
     <>
-      {/* Jelentkezés törlése */}
       {selectedRegistration && selectedUser && (
         <RegistrationDeleteModal
           registration={selectedRegistration}
           user={selectedUser}
-          eventId={eventId}
           onClose={() => {
             setSelectedRegistration(null);
             setSelectedUser(null);
@@ -86,7 +84,6 @@ export default function AdminEventRegistrations({ eventId }) {
         />
       )}
 
-      {/* Jelentkezés áthelyezése */}
       {selectedMoveRegistration && selectedMoveUser && (
         <MoveRegistrationModal
           registration={selectedMoveRegistration}
@@ -154,7 +151,6 @@ export default function AdminEventRegistrations({ eventId }) {
                   <td className="px-4 py-2">{user.birthDate || "-"}</td>
                   <td className="px-4 py-2">{user.gender || "-"}</td>
 
-                  {/* Áthelyezés ikon */}
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => {
@@ -172,7 +168,6 @@ export default function AdminEventRegistrations({ eventId }) {
                     </button>
                   </td>
 
-                  {/* Kuka ikon */}
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => {

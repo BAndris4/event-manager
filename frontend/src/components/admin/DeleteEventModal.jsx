@@ -53,7 +53,6 @@ export default function DeleteEventModal({ event, onClose }) {
           {event.title}
         </p>
 
-        {/* ⚠ Figyelmeztetés ha vannak jelentkezők */}
         {event.registered > 0 && (
           <p className="mb-4 p-3 rounded-lg bg-yellow-100 text-yellow-800 border border-yellow-300">
             Figyelem! Ehhez az eseményhez <strong>{event.registered}</strong>{" "}
