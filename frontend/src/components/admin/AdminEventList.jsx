@@ -7,14 +7,12 @@ export default function AdminEventList() {
   useEffect(() => {
     fetch("http://localhost:8080/api/events", { credentials: "include" })
       .then((res) => {
-        console.log("STATUS:", res.status);
         return res.json();
       })
       .then((data) => {
-        console.log("DATA:", data);
         setEvents(data);
       })
-      .catch((err) => console.error("FETCH ERROR:", err));
+      .catch((err) => console.error(err));
   }, []);
 
   return (

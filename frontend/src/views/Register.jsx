@@ -6,13 +6,7 @@ import InputField from "../components/form/InputField";
 import GenderSelect from "../components/form/GenderSelect";
 import DatePicker from "../components/form/DatePicker/DatePicker";
 
-import {
-  Mail,
-  Lock,
-  User,
-  Phone,
-  ChevronRight,
-} from "lucide-react";
+import { Mail, Lock, User, Phone, ChevronRight } from "lucide-react";
 
 function Register() {
   const [form, setForm] = useState({
@@ -36,10 +30,11 @@ function Register() {
     if (!form.firstName.trim()) newErrors.firstName = "First name is required.";
     if (!form.lastName.trim()) newErrors.lastName = "Last name is required.";
     if (!form.gender.trim()) newErrors.gender = "Gender is required.";
-    if (!form.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required.";
+    if (!form.phoneNumber.trim())
+      newErrors.phoneNumber = "Phone number is required.";
 
     if (!form.birthDate) {
-      newErrors.birthDate = "Birth date must be in the past.";
+      newErrors.birthDate = "Birth date is required.";
     } else {
       const selected = new Date(form.birthDate);
       if (selected >= new Date()) {
@@ -99,8 +94,6 @@ function Register() {
         throw new Error(backendMessage || "Failed to register.");
       }
 
-      console.log("Registration successful");
-
       const loginRes = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
         credentials: "include",
@@ -115,13 +108,10 @@ function Register() {
         throw new Error("Auto-login failed after registration.");
       }
 
-      console.log("Auto-login successful");
-
-      setSuccess("Sikeres regisztráció, bejelentkezve ✔");
+      setSuccess("Sikeres regisztráció, bejelentkezés!");
       setTimeout(() => {
         navigate("/");
       }, 1500);
-
     } catch (err) {
       setError("Hiba történt regisztráció közben.");
     } finally {
@@ -140,7 +130,6 @@ function Register() {
 
         <div className="rounded-3xl bg-white border border-[var(--ruby-red-transparent)] shadow-sm p-6 space-y-6 hover:shadow-md transition-all duration-300">
           <form onSubmit={handleRegister} className="space-y-5">
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <InputField
@@ -166,7 +155,9 @@ function Register() {
                   onChange={handleChange}
                 />
                 {errors.firstName && (
-                  <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.firstName}
+                  </p>
                 )}
               </div>
             </div>
@@ -214,7 +205,9 @@ function Register() {
                 onChange={handleChange}
               />
               {errors.phoneNumber && (
-                <p className="text-red-600 text-sm mt-1">{errors.phoneNumber}</p>
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.phoneNumber}
+                </p>
               )}
             </div>
 

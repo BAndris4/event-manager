@@ -60,7 +60,15 @@ export default function MoveRegistrationModal({
         }
       );
 
-      if (!res.ok) throw new Error("A jelentkezés áthelyezése sikertelen.");
+      if (!res.ok) {
+        if (res.status === 409) {
+          throw new Error(
+            "A kiválasztott eseményre már jelentkezett a felhasználó."
+          );
+        } else {
+          throw new Error("Az áthelyezés sikertelen volt.");
+        }
+      }
 
       if (onMoved) {
         onMoved(registration.id, selectedEventId);
@@ -69,7 +77,6 @@ export default function MoveRegistrationModal({
         window.location.reload();
       }, 900);
     } catch (err) {
-      console.error(err);
       setError(err.message);
     } finally {
       setSubmitting(false);

@@ -1,5 +1,6 @@
 package inf.unideb.hu.event_manager.controller;
 
+import inf.unideb.hu.event_manager.data.repository.EventRepository;
 import inf.unideb.hu.event_manager.service.EventService;
 import inf.unideb.hu.event_manager.service.dto.EventCreateDto;
 import inf.unideb.hu.event_manager.service.dto.EventDto;
@@ -16,9 +17,11 @@ import java.util.List;
 public class EventController {
 
     final EventService eventService;
+    private final EventRepository eventRepository;
 
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, EventRepository eventRepository) {
         this.eventService = eventService;
+        this.eventRepository = eventRepository;
     }
 
     @GetMapping
@@ -37,6 +40,13 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventDto> postEvent(@RequestBody @Valid EventCreateDto eventDto) {
+        if (eventDto.getEndDate() != null && eventDto.getEndDate().isBefore(eventDto.getStartDate())) {
+            throw new IllegalStateException("A befejezés dátuma nem lehet korábbi, mint a kezdés dátuma.");
+        }
+        boolean exists = eventRepository.existsByTitle(eventDto.getTitle());
+        if (exists) {
+            throw new IllegalStateException("Már létezik esemény ezzel a címmel.");
+        }
         EventDto created = eventService.createEvent(eventDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }

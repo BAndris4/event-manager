@@ -17,6 +17,7 @@ export default function CreateEventModal({ onClose }) {
   const update = (field, value) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
+  const normalizeDate = (value) => (value ? value + ":00" : null);
   const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,8 +28,9 @@ export default function CreateEventModal({ onClose }) {
       const payload = {
         title: form.title,
         description: form.description.trim() === "" ? null : form.description,
-        startDate: form.startDate,
-        endDate: form.endDate.trim() === "" ? null : form.endDate,
+        startDate: normalizeDate(form.startDate),
+        endDate:
+          form.endDate.trim() === "" ? null : normalizeDate(form.endDate),
         location: form.location,
         capacity: form.capacity === "" ? null : Number(form.capacity),
       };
@@ -40,7 +42,21 @@ export default function CreateEventModal({ onClose }) {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Hiba történt az esemény létrehozásakor.");
+      if (!res.ok) {
+        const errorBody = await res.json();
+
+        if (errorBody.errors) {
+          const firstField = Object.keys(errorBody.errors)[0];
+          const firstMessage = errorBody.errors[firstField][0];
+          throw new Error(firstMessage);
+        }
+
+        if (errorBody.error) {
+          throw new Error(errorBody.error);
+        }
+
+        throw new Error("Ismeretlen hiba történt.");
+      }
 
       setSuccess(true);
 

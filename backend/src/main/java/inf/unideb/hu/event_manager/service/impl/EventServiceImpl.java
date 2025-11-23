@@ -38,10 +38,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto createEvent(EventCreateDto dto) {
 
-        if (dto.getEndDate() != null && !dto.getEndDate().isBlank()) {
-            LocalDateTime end = LocalDateTime.parse(dto.getEndDate());
-            LocalDateTime start = LocalDateTime.parse(dto.getStartDate());
-            if (end.isBefore(start)) throw new IllegalStateException("End date must be after start date.");
+        if (dto.getEndDate() != null && dto.getEndDate().isBefore(dto.getStartDate())) {
+            throw new IllegalStateException("End date must be after start date.");
         }
 
         EventEntity entity = eventMapper.eventCreateDtoToEntity(dto);
