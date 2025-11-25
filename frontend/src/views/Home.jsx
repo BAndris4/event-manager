@@ -23,7 +23,6 @@ function Home() {
         const data = await res.json();
         setEvents(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error(err);
         setError("Hiba történt az események betöltése közben.");
       } finally {
         setLoading(false);
@@ -86,7 +85,6 @@ function Home() {
           opacity-0 translate-y-3 animate-[fadeIn_0.6s_ease-out_forwards]
         "
       >
-
         {/* HERO */}
         <section className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-4">
@@ -139,9 +137,7 @@ function Home() {
         <hr className="border-[var(--ruby-red-transparent)] my-4" />
 
         <section className="space-y-4">
-
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
             <h2 className="text-lg font-semibold">Közelgő események</h2>
 
             <div className="relative">
@@ -206,7 +202,9 @@ function Home() {
                   <hr className="my-1 border-[var(--ruby-red-transparent)]" />
 
                   <div
-                    onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                    onClick={() =>
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    }
                     className="px-4 py-2 hover:bg-[var(--ruby-red-transparent)] cursor-pointer flex justify-between"
                   >
                     <span>Irány</span>

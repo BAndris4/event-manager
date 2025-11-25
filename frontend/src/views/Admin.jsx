@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import AdminEventList from "../components/admin/AdminEventList";
 import CreateEventModal from "../components/admin/CreateEventModal";
 import UpdateEventModal from "../components/admin/UpdateEventModal";
 import DeleteEventModal from "../components/admin/DeleteEventModal";
+import useAuthStatus from "../hooks/useAuthStatus";
+import { useNavigate } from "react-router-dom";
 
 export default function Admin() {
   const [showCreate, setShowCreate] = useState(false);
   const [showUpdate, setShowUpdate] = useState(null);
   const [showDelete, setShowDelete] = useState(null);
+  const { loading, isAuthenticated, role } = useAuthStatus();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && (!isAuthenticated || role !== "ROLE_ADMIN")) {
+      navigate("/");
+    }
+  }, [loading, isAuthenticated, role, navigate]);
 
   return (
     <>

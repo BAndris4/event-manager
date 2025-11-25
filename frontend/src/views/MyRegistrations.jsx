@@ -2,13 +2,26 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
 import useAuthStatus from "../hooks/useMyRegistrationStatus";
+import { useNavigate } from "react-router-dom";
 
 function MyRegistrations() {
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [error, setError] = useState("");
 
-  const { registrations, loading: authLoading } = useAuthStatus();
+  const {
+    registrations,
+    loading: authLoading,
+    isAuthenticated,
+  } = useAuthStatus();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   useEffect(() => {
     const loadEvents = async () => {

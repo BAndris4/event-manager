@@ -52,7 +52,6 @@ function EventCard({ event }) {
       if (!res.ok) throw new Error("Hiba a kérelemben");
       window.location.reload();
     } catch (e) {
-      console.error(e);
       setLoading(false);
     }
   };

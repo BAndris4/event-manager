@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import InputField from "../components/form/InputField";
 
 import { Mail, Lock, ChevronRight } from "lucide-react";
+import useAuthStatus from "../hooks/useAuthStatus";
 
 function Login() {
   const [form, setForm] = useState({
@@ -17,6 +18,14 @@ function Login() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const { isAuthenticated } = useAuthStatus();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -88,7 +97,6 @@ function Login() {
 
         <div className="rounded-3xl bg-white border border-[var(--ruby-red-transparent)] shadow-sm p-6 space-y-6 hover:shadow-md transition-all duration-300">
           <form onSubmit={handleLogin} className="space-y-5">
-
             <div>
               <InputField
                 icon={<Mail size={18} />}

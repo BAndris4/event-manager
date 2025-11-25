@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 import InputField from "../components/form/InputField";
 import GenderSelect from "../components/form/GenderSelect";
 import DatePicker from "../components/form/DatePicker/DatePicker";
+
+import useAuthStatus from "../hooks/useAuthStatus";
 
 import { Mail, Lock, User, Phone, ChevronRight } from "lucide-react";
 
@@ -23,7 +25,14 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const { isAuthenticated } = useAuthStatus();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
   const validateForm = () => {
     const newErrors = {};
 
